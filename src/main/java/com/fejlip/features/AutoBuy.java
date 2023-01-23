@@ -57,10 +57,6 @@ public class AutoBuy {
                                 }
                             } else if (Items.gold_nugget == stack.getItem() || Item.getItemFromBlock(Blocks.gold_block) == stack.getItem()) {
                                 clickNugget(chest.windowId);
-                            } else {
-                                Helpers.sendDebugMessage("Something went wrong, skipping...");
-                                Minecraft.getMinecraft().thePlayer.closeScreen();
-                                Macro.getInstance().getQueue().setRunning(false);
                             }
                         }
                     }
