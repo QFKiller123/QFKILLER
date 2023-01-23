@@ -1,16 +1,19 @@
-# FM-Macro
+# qfKiller
 
-Just cuz i dislike you Domino :)
+Free macro for Cofl flipping mod
 
-My 1st ever mc mod so it's probably not done in "best" way, but who cares. It works, most of the time... :D
+Features:
+- Auto open
+- Auto buy
 
-https://discord.gg/9TRJKJ4nck if u have questions
+https://discord.gg/eZ8usnrts3 if u have questions
 
 ```
-/fm toggle - turn on/off (autoopen autobuy at once)
+/fm help - shows the commands
+/fm autoopen - turn on/off autoopen
+/fm autobuy - turn on/off autobuy
 /fm bed <x> - bed click speed
 /fm debug - displays some debug messages (turn on on 1st use to know what is going on)
 
 Settings aren't saved so u need to set bed speed on each launch
-If something bugs out do /fm toggle twice to reset the macro
 ```

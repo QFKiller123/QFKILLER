@@ -18,4 +18,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "macro"
+rootProject.name = "fejlipmod"

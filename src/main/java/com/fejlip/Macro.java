@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 // Created by Fejlip#3070
 // Do whatever you want with it :)
-@Mod(modid = "macro", version = "1.0.0")
+@Mod(modid = "fejlipmod", version = "1.2.0")
 public class Macro {
     private Config config;
     private static Macro instance;
@@ -27,7 +27,7 @@ public class Macro {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (this.config.isEnabled()) {
+            if (this.config.isAutoOpenEnabled()) {
                 if (!this.queue.isEmpty()) {
                     if (!this.queue.isRunning()) {
                         this.queue.setRunning(true);
@@ -51,7 +51,6 @@ public class Macro {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        System.out.println("Macro loaded!");
         ClientCommandHandler.instance.registerCommand(new MacroCommand());
         MinecraftForge.EVENT_BUS.register(new AutoBuy());
         new AutoOpen();

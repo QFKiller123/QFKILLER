@@ -60,7 +60,7 @@ tasks.withType(JavaCompile::class) {
 }
 
 tasks.withType(Jar::class) {
-    archiveBaseName.set("macro")
+    archiveBaseName.set("fejilpmod")
     manifest.attributes.run {
         this["FMLCorePluginContainsFMLMod"] = "true"
         this["ForceLoadAsMod"] = "true"

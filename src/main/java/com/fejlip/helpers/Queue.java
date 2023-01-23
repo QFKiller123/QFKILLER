@@ -7,6 +7,9 @@ public class Queue {
     private final List<QueueItem> queue = new ArrayList<>();
     private boolean running = false;
 
+    private boolean clearTaskRunning = false;
+
+
     public void add(QueueItem item) {
         this.queue.add(item);
     }
@@ -33,4 +36,21 @@ public class Queue {
         this.queue.clear();
     }
 
+    public void scheduleClear() {
+        if (!this.clearTaskRunning) {
+            this.clearTaskRunning = true;
+
+            new Thread(() -> {
+                try {
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                this.clear();
+                this.setRunning(false);
+                this.clearTaskRunning = false;
+                Helpers.sendDebugMessage("Cleared queue.");
+            }).start();
+        }
+    }
 }

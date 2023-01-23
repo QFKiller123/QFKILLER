@@ -1,31 +1,42 @@
 package com.fejlip.config;
 
 public class Config {
-    private boolean enabled;
+    private boolean autoBuyEnabled;
+    private boolean autoOpenEnabled;
     private boolean debug;
-    private int bedDelay;
+    private int bedClickDelay;
 
     public Config() {
-        this.enabled = false;
-        this.bedDelay = 90;
+        this.autoBuyEnabled = false;
+        this.autoOpenEnabled = false;
+        this.bedClickDelay = 70;
         this.debug = false;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isAutoBuyEnabled() {
+        return autoBuyEnabled;
     }
 
-    public boolean toggleEnabled() {
-        this.enabled = !this.enabled;
-        return this.enabled;
+    public boolean toggleAutoBuy() {
+        this.autoBuyEnabled = !this.autoBuyEnabled;
+        return this.autoBuyEnabled;
     }
 
-    public int getBedDelay() {
-        return bedDelay;
+    public boolean isAutoOpenEnabled() {
+        return autoOpenEnabled;
     }
 
-    public void setBedDelay(int bedDelay) {
-        this.bedDelay = bedDelay;
+    public boolean toggleAutoOpen() {
+        this.autoOpenEnabled = !this.autoOpenEnabled;
+        return this.autoOpenEnabled;
+    }
+
+    public int getBedClickDelay() {
+        return bedClickDelay;
+    }
+
+    public void setBedClickDelay(int bedDelay) {
+        this.bedClickDelay = bedDelay;
     }
 
     public boolean isDebug() {

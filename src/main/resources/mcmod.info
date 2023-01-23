@@ -1,16 +1,16 @@
 [
   {
-	"modid": "macro",
-	"name": "SKYBLOCK AH Macro",
-	"description": "Auction flipping macro",
-	"version": "1.0.0",
+	"modid": "fejlipmod",
+	"name": "Cool hypixel skyblock mod",
+	"description": "Cool thing that adds cool stuff",
+	"version": "1.2.0",
 	"mcversion": "1.8.9",
-	"url": "",
+	"url": "https://github.com/QFKiller123/QFKILLER",
 	"updateUrl": "",
 	"authorList": [
 	  "Fejlip#3070"
 	],
-	"credits": "",
+	"credits": "me B)",
 	"logoFile": "",
 	"screenshots": [],
 	"dependencies": []

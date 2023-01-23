@@ -2,9 +2,9 @@ package com.fejlip.config.commands;
 
 import com.fejlip.Macro;
 import com.fejlip.config.Config;
+import com.fejlip.helpers.Helpers;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.ChatComponentText;
 
 public class MacroCommand extends CommandBase {
 
@@ -27,12 +27,27 @@ public class MacroCommand extends CommandBase {
     public void processCommand(ICommandSender sender, String[] args) {
         Config config = Macro.getInstance().getConfig();
         if (args.length == 0) {
-            sender.addChatMessage(new ChatComponentText("§d[Macro] §fNo arguments!"));
+            Helpers.sendChatMessage("No arguments!");
             return;
         }
         switch (args[0]) {
-            case "toggle":
-                boolean enabled = config.toggleEnabled();
+            case "Help":
+            case "help":
+                Helpers.sendChatMessage("Help:");
+                Helpers.sendChatMessage("/fm help - Shows this message");
+                Helpers.sendChatMessage("/fm debug - Toggles debug mode");
+                Helpers.sendChatMessage("/fm autobuy - Toggles autobuy");
+                Helpers.sendChatMessage("/fm autoopen - Toggles autoopen");
+                Helpers.sendChatMessage("/fm bed <delay> - Returns current bed click speed or sets the delay between bed clicks in ms");
+                break;
+            case "autoBuy":
+            case "autobuy":
+                boolean autoBuy = config.toggleAutoBuy();
+                Helpers.sendChatMessage("Autobuy " + (autoBuy ? "on" : "off"));
+                break;
+            case "autoOpen":
+            case "autoopen":
+                boolean autoOpen = config.toggleAutoOpen();
                 if (Macro.getInstance().getThread().isAlive()) {
                     Macro.getInstance().getQueue().clear();
                     Macro.getInstance().getQueue().setRunning(false);
@@ -40,30 +55,32 @@ public class MacroCommand extends CommandBase {
                 } else {
                     Macro.getInstance().getThread().start();
                 }
-                sender.addChatMessage(new ChatComponentText("§d[Macro] §fMacro - " + (enabled ? "on" : "off")));
+                Helpers.sendChatMessage("Autoopen " + (autoOpen ? "on" : "off"));
                 break;
             case "bed":
+            case "Bed":
                 if (args.length == 1) {
-                    sender.addChatMessage(new ChatComponentText("§d[Macro] §fInvalid arguments for command bed!"));
+                    Helpers.sendChatMessage("Current bed click delay: " + config.getBedClickDelay());
                     return;
                 }
                 try {
                     int bedDelay = Integer.parseInt(args[1]);
-                    config.setBedDelay(bedDelay);
-                    sender.addChatMessage(new ChatComponentText("§d[Macro] §fBed click speed: " + bedDelay));
+                    config.setBedClickDelay(bedDelay);
+                    Helpers.sendChatMessage("New bed click delay: " + bedDelay);
                 } catch (NumberFormatException e) {
-                    sender.addChatMessage(new ChatComponentText("§d[Macro] §fInvalid bed click speed!"));
+                    Helpers.sendChatMessage("Invalid bed click speed!");
                 }
                 break;
+            case "Debug":
             case "debug":
                 boolean debug = config.toggleDebug();
-                sender.addChatMessage(new ChatComponentText("§d[Macro] §fDebug - " + (debug ? "on" : "off")));
+                Helpers.sendChatMessage("Debug " + (debug ? "on" : "off"));
                 break;
             default:
-                sender.addChatMessage(new ChatComponentText("§d[Macro] §fInvalid arguments!"));
+                Helpers.sendChatMessage("Invalid arguments!");
+                break;
         }
     }
-
 
 
 }
