@@ -1,6 +1,6 @@
 # qfKiller
 
-Free macro for Cofl flipping mod
+Open source macro for Cofl flipping mod
 
 Features:
 - Auto open
