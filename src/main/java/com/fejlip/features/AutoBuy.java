@@ -15,17 +15,22 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 public class AutoBuy {
     private int lastAuctionBought = 0;
-    private final ScheduledExecutorService service;
-    private int earlierWindowId = 0;
-    private boolean buying = false;
-    public AutoBuy() {
-        this.service = Executors.newSingleThreadScheduledExecutor();
+    private boolean bedStarted = false;
+
+    private Thread bedThread = null;
+
+    private void handleBuyFinished() {
+        bedStarted = false;
+        if (bedThread != null && bedThread.isAlive()) {
+            try {
+                bedThread.interrupt();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        Macro.getInstance().getQueue().setRunning(false);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -38,23 +43,24 @@ public class AutoBuy {
                 if (name.contains("BIN Auction View")) {
                     ItemStack stack = chest.getSlot(31).getStack();
                     if (stack != null) {
-                        if (!buying) buying = true;
                         if (Items.feather != stack.getItem()) {
                             if (Items.potato == stack.getItem()) {
                                 Helpers.sendDebugMessage("Someone bought the auction already, skipping...");
+                                handleBuyFinished();
                                 Minecraft.getMinecraft().thePlayer.closeScreen();
-                                buying = false;
-                                Macro.getInstance().getQueue().setRunning(false);
-                            } else if (Items.bed == stack.getItem()) {
-                                if (chest.windowId != this.earlierWindowId) {
-                                    int bedDelay = config.getBedClickDelay();
-                                    this.earlierWindowId = chest.windowId;
-                                    this.service.scheduleWithFixedDelay(() -> {
-                                        if (buying) {
+                            } else if (Items.bed == stack.getItem() && !bedStarted) {
+                                bedStarted = true;
+                                bedThread = new Thread(() -> {
+                                    try {
+                                        while (true) {
                                             clickNugget(chest.windowId);
+                                            Thread.sleep(Macro.getInstance().getConfig().getBedClickDelay());
                                         }
-                                    }, 1L, bedDelay, TimeUnit.MILLISECONDS);
-                                }
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                });
+                                bedThread.start();
                             } else if (Items.gold_nugget == stack.getItem() || Item.getItemFromBlock(Blocks.gold_block) == stack.getItem()) {
                                 clickNugget(chest.windowId);
                             }
@@ -73,31 +79,18 @@ public class AutoBuy {
     @SubscribeEvent
     public void onClientChatMessage(ClientChatReceivedEvent event) {
         String str = event.message.getUnformattedText();
-
-        if (Macro.getInstance().getQueue().isRunning()) {
-            if (str.contains("This auction wasn't found") || str.contains("There was an error with the auction")) {
-                Helpers.sendDebugMessage("Error or not found");
-                buying = false;
-                Macro.getInstance().getQueue().setRunning(false);
-            }
-            if (str.contains("You don't have enough coins to afford this bid!")) {
-                Helpers.sendDebugMessage("Not enough coins to buy this auction, skipping...");
-                Minecraft.getMinecraft().thePlayer.closeScreen();
-                buying = false;
-                Macro.getInstance().getQueue().setRunning(false);
-
-            }
-            if (str.contains("Putting coins in")) {
-                Helpers.sendDebugMessage("Putting coins in escrow...");
-                buying = false;
-                Macro.getInstance().getQueue().setRunning(false);
-            }
+        if (str.contains("This auction wasn't found") || str.contains("There was an error with the auction")) {
+            Helpers.sendDebugMessage("Error or not found");
+            handleBuyFinished();
         }
-        else {
-            if (str.contains("Putting coins in")) {
-                buying = false;
-                Helpers.sendDebugMessage("Putting coins in escrow...");
-            }
+        if (str.contains("You don't have enough coins to afford this bid!")) {
+            Helpers.sendDebugMessage("Not enough coins to buy this auction, skipping...");
+            handleBuyFinished();
+            Minecraft.getMinecraft().thePlayer.closeScreen();
+        }
+        if (str.contains("Putting coins in")) {
+            handleBuyFinished();
+            Macro.getInstance().getQueue().setRunning(false);
         }
     }
 
